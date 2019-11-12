@@ -125,3 +125,4 @@ C:\Users\Maggie34\workspace\exercises\StudentExercisesMVC\StudentExercisesMVC\ob
 C:\Users\Maggie34\workspace\exercises\StudentExercisesMVC\StudentExercisesMVC\obj\Debug\netcoreapp3.0\StudentExercisesMVC.dll
 C:\Users\Maggie34\workspace\exercises\StudentExercisesMVC\StudentExercisesMVC\obj\Debug\netcoreapp3.0\StudentExercisesMVC.pdb
 C:\Users\Maggie34\workspace\exercises\StudentExercisesMVC\StudentExercisesMVC\obj\Debug\netcoreapp3.0\Razor\Views\Students\Index.cshtml.g.cs
+C:\Users\Maggie34\workspace\exercises\StudentExercisesMVC\StudentExercisesMVC\obj\Debug\netcoreapp3.0\Razor\Views\Students\Details.cshtml.g.cs
