@@ -166,8 +166,8 @@ namespace StudentExercisesMVC.Controllers
         // GET: Students/Edit/5
         public ActionResult Edit(int id)
         {
-            
-            return View();
+            var student = GetStudentById(id);
+            return View(student);
         }
 
         // POST: Students/Edit/5
@@ -182,7 +182,7 @@ namespace StudentExercisesMVC.Controllers
                     conn.Open();
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = @"UPDATE Student 
+                        cmd.CommandText = @"UPDATE Students 
                                             SET FirstName = @FirstName,
                                                 LastName = @LastName,
                                                 SlackHandle = @SlackHandle,
@@ -225,7 +225,8 @@ namespace StudentExercisesMVC.Controllers
         // GET: Students/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var student = GetStudentById(id);
+            return View(student);
         }
 
         // POST: Students/Delete/5
@@ -235,9 +236,26 @@ namespace StudentExercisesMVC.Controllers
         {
             try
             {
-                // TODO: Add delete logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "DELETE FROM StudentExercises WHERE StudentId = @id;" +
+                                          "DELETE FROM Students WHERE Id = @id";
 
-                return RedirectToAction(nameof(Index));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            return RedirectToAction(nameof(Index));
+                        }
+
+                        throw new Exception("No rows affected");
+                    }
+                }
             }
             catch
             {
@@ -268,6 +286,52 @@ namespace StudentExercisesMVC.Controllers
                     reader.Close();
 
                     return cohorts;
+                }
+            }
+        }
+
+        private Student GetStudentById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @" SELECT s.Id, 
+                                         s.FirstName, 
+                                         s.LastName, 
+                                         s.SlackHandle, 
+                                         s.CohortId,
+                                         c.Id, c.Name
+                                         FROM Students s
+                                         LEFT JOIN Cohorts c ON s.CohortId = c.Id
+                                         WHERE s.id = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Student newStudent = null;
+
+                    if (reader.Read())
+                    {
+                        newStudent = new Student
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            SlackHandle = reader.GetString(reader.GetOrdinal("SlackHandle")),
+                            CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
+                            Cohort = new Cohort()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                CohortName = reader.GetString(reader.GetOrdinal("Name"))
+                            }
+                        };
+                    }
+
+                    reader.Close();
+                    return newStudent;
                 }
             }
         }
