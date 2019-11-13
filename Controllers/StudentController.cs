@@ -12,11 +12,11 @@ using StudentExercisesMVC.Models.ViewModels;
 
 namespace StudentExercisesMVC.Controllers
 {
-    public class StudentsController : Controller
+    public class StudentController : Controller
     {
         private readonly IConfiguration _config;
 
-        public StudentsController(IConfiguration config)
+        public StudentController(IConfiguration config)
         {
             _config = config;
         }
@@ -149,9 +149,10 @@ namespace StudentExercisesMVC.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"INSERT INTO Students
-                ( FirstName, LastName, SlackHandle, CohortId )
-                VALUES
-                ( @firstName, @lastName, @slackHandle, @cohortId )";
+                                        ( FirstName, LastName, SlackHandle, CohortId )
+                                        VALUES
+                                        ( @firstName, @lastName, @slackHandle, @cohortId )";
+
                     cmd.Parameters.Add(new SqlParameter("@firstName", model.Student.FirstName));
                     cmd.Parameters.Add(new SqlParameter("@lastName", model.Student.LastName));
                     cmd.Parameters.Add(new SqlParameter("@slackHandle", model.Student.SlackHandle));
